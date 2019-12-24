@@ -1,13 +1,8 @@
 from bs4 import BeautifulSoup
 import requests
 
-req = requests.get('http://www.statiz.co.kr/player.php')
+req = requests.get('http://old.statiz.co.kr/player.php?opt=1')
 html = req.text
 soup = BeautifulSoup(html, 'html.parser')
-data = soup.find('div', {'class': 'wrapper'})
-data = data.find('div', {'class': 'content-wrapper'})
-data = data.find('div', {'class': 'container'})
-data = data.find('section', {'class': 'content'})
-data = data.find('div', {'class': 'row'})
-data = data.findAll('div', {'class': 'col-md-12 col-xs-12 col-sm-12 col-lg-12'})[1]
-data = data.find('div', {'class': 'row'})
+data = soup.find('div', {'class': 'contents_main_full'})
+data = data.findAll('div', {'style': 'position:relative; width:93px; margin:0px 0px 5px 1px; float:left;'})
