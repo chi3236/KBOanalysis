@@ -1,8 +1,9 @@
 from bs4 import BeautifulSoup
-import requests
+from selenium import webdriver
 import time
-req = requests.get('http://old.statiz.co.kr/player.php?opt=1')
-html = req.text
+driver = webdriver.Chrome('/Users/scw/Downloads/chromedriver')
+driver.get('http://old.statiz.co.kr/player.php?opt=1')
+html = driver.page_source
 soup = BeautifulSoup(html, 'html.parser')
 data = soup.find('div', {'class': 'contents_main_full'})
 data = data.findAll('div', {'style': 'position:relative; width:93px; margin:0px 0px 5px 1px; float:left;'})
@@ -10,13 +11,13 @@ all_records = {}
 for d in data[0:5]:
     players = d.findAll('tr')
     for p in players[3:]:
-        #time.sleep(3)
+        time.sleep(3)
         p_stat = p.find('a').attrs['href']
         p_stat_ = p_stat.split('?')[0] + '?opt=1&' + p_stat.split('?')[1]
-        page = 'http://old.statiz.co.kr/' + p_stat_
-        p_req = requests.get(page)
-        p_html = p_req.text
-        p_soup = BeautifulSoup(p_html, 'html.parser')
+        url = 'http://old.statiz.co.kr/' + p_stat_
+        driver.get(url)
+        html_ = driver.page_source
+        p_soup = BeautifulSoup(html_, 'html.parser')
         p_data = p_soup.find('div', {'class': 'contents_main_full'})
         p_name = p_data.find('div', {'class': 'menu_title_left'}).contents[0]
         p_position = p_data.findAll('div', {'id': 'minimenu_list'})[7].contents[0]
@@ -39,7 +40,7 @@ for d in data[0:5]:
         else:
             for r in p_record[3:-3]:
                 year = []
-                for r_content in r.contents[3:29]:
+                for r_content in r.contents[3:30]:
                     try:
                         year.append(r_content.contents[0].contents[0])
                     except:
@@ -48,4 +49,3 @@ for d in data[0:5]:
                         else:
                             year.append('-1')
                 all_records[p_name].append(year)
-    print "asdf"
